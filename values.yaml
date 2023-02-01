@@ -92,7 +92,7 @@ server:
       additionalStores: {}
 
       default:
-        driver: "cassandra"
+        driver: "sql"
 
         cassandra:
           hosts: []
@@ -111,21 +111,17 @@ server:
           # maxConns: 2
 
         sql:
-          driver: "mysql"
-          host: "mysql"
-          port: 3306
+          driver: "postgres"
+          host: "temporal-prod.clzc7zni9qdc.us-west-2.rds.amazonaws.com"
+          port: 5432
           database: "temporal"
           user: "temporal"
-          password: "temporal"
-          existingSecret: ""
-          secretName: ""
+          password: "wPrHkZiOvyK5T8CLmjDJ"
           maxConns: 20
           maxConnLifetime: "1h"
-          # connectAttributes:
-            # tx_isolation: 'READ-COMMITTED'
 
       visibility:
-        driver: "cassandra"
+        driver: "sql"
 
         cassandra:
           hosts: []
@@ -144,18 +140,14 @@ server:
               serialConsistency: "local_serial"
 
         sql:
-          driver: "mysql"
-          host: "mysql"
-          port: 3306
+          driver: "postgres"
+          host: "temporal-prod.clzc7zni9qdc.us-west-2.rds.amazonaws.com"
+          port: 5432
           database: "temporal_visibility"
           user: "temporal"
-          password: "temporal"
-          existingSecret: ""
-          secretName: ""
+          password: "wPrHkZiOvyK5T8CLmjDJ"
           maxConns: 20
           maxConnLifetime: "1h"
-          # connectAttributes:
-          #   tx_isolation: 'READ-COMMITTED'
 
   frontend:
     # replicaCount: 1
@@ -316,14 +308,14 @@ web:
 
 schema:
   setup:
-    enabled: true
+    enabled: false
     backoffLimit: 100
   update:
-    enabled: true
+    enabled: false
     backoffLimit: 100
 
 elasticsearch:
-  enabled: true
+  enabled: false
   replicas: 3
   persistence:
     enabled: false
@@ -341,6 +333,9 @@ prometheus:
   enabled: true
   nodeExporter:
     enabled: false
+  server:
+    extraArgs:
+      'storage.tsdb.retention.size': 2GB
 
 grafana:
   enabled: true
@@ -364,43 +359,43 @@ grafana:
         options:
           path: /var/lib/grafana/dashboards/default
   datasources:
-   datasources.yaml:
-     apiVersion: 1
-     datasources:
-     - name: TemporalMetrics
-       type: prometheus
-       url: http://{{ .Release.Name }}-prometheus-server
-       access: proxy
-       isDefault: true
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: TemporalMetrics
+        type: prometheus
+        url: http://{{ .Release.Name }}-prometheus-server
+        access: proxy
+        isDefault: true
   dashboards:
-     default:
-       server-general-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/server/server-general.json
-         datasource: TemporalMetrics
-       sdk-general-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/sdk/sdk-general.json
-         datasource: TemporalMetrics
-       misc-advanced-visibility-specific-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/advanced-visibility-specific.json
-         datasource: TemporalMetrics
-       misc-clustermonitoring-kubernetes-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/clustermonitoring-kubernetes.json
-         datasource: TemporalMetrics
-       misc-frontend-service-specific-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/frontend-service-specific.json
-         datasource: TemporalMetrics
-       misc-history-service-specific-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/history-service-specific.json
-         datasource: TemporalMetrics
-       misc-matching-service-specific-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/matching-service-specific.json
-         datasource: TemporalMetrics
-       misc-worker-service-specific-github:
-         url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/worker-service-specific.json
-         datasource: TemporalMetrics
+    default:
+      server-general-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/server/server-general.json
+        datasource: TemporalMetrics
+      sdk-general-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/sdk/sdk-general.json
+        datasource: TemporalMetrics
+      misc-advanced-visibility-specific-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/advanced-visibility-specific.json
+        datasource: TemporalMetrics
+      misc-clustermonitoring-kubernetes-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/clustermonitoring-kubernetes.json
+        datasource: TemporalMetrics
+      misc-frontend-service-specific-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/frontend-service-specific.json
+        datasource: TemporalMetrics
+      misc-history-service-specific-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/history-service-specific.json
+        datasource: TemporalMetrics
+      misc-matching-service-specific-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/matching-service-specific.json
+        datasource: TemporalMetrics
+      misc-worker-service-specific-github:
+        url: https://raw.githubusercontent.com/temporalio/dashboards/helm/misc/worker-service-specific.json
+        datasource: TemporalMetrics
 
 cassandra:
-  enabled: true
+  enabled: false
   persistence:
     enabled: false
   image:
