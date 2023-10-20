@@ -92,7 +92,7 @@ server:
       additionalStores: {}
 
       default:
-        driver: "sql"
+        driver: "cassandra"
 
         cassandra:
           hosts: []
@@ -111,19 +111,21 @@ server:
           # maxConns: 2
 
         sql:
-          driver: "postgres"
-          host: "temporal-prod.clzc7zni9qdc.us-west-2.rds.amazonaws.com"
-          port: 5432
+          driver: "mysql"
+          host: "mysql"
+          port: 3306
           database: "temporal"
           user: "temporal"
-          password: "wPrHkZiOvyK5T8CLmjDJ"
+          password: "temporal"
+          existingSecret: ""
+          secretName: ""
           maxConns: 20
           maxConnLifetime: "1h"
           # connectAttributes:
             # tx_isolation: 'READ-COMMITTED'
 
       visibility:
-        driver: "sql"
+        driver: "cassandra"
 
         cassandra:
           hosts: []
@@ -142,14 +144,18 @@ server:
               serialConsistency: "local_serial"
 
         sql:
-          driver: "postgres"
-          host: "temporal-prod.clzc7zni9qdc.us-west-2.rds.amazonaws.com"
-          port: 5432
+          driver: "mysql"
+          host: "mysql"
+          port: 3306
           database: "temporal_visibility"
           user: "temporal"
-          password: "wPrHkZiOvyK5T8CLmjDJ"
+          password: "temporal"
+          existingSecret: ""
+          secretName: ""
           maxConns: 20
           maxConnLifetime: "1h"
+          # connectAttributes:
+          #   tx_isolation: 'READ-COMMITTED'
 
   frontend:
     # replicaCount: 1
@@ -310,14 +316,14 @@ web:
 
 schema:
   setup:
-    enabled: false
+    enabled: true
     backoffLimit: 100
   update:
-    enabled: false
+    enabled: true
     backoffLimit: 100
 
 elasticsearch:
-  enabled: false
+  enabled: true
   replicas: 3
   persistence:
     enabled: false
@@ -335,9 +341,6 @@ prometheus:
   enabled: true
   nodeExporter:
     enabled: false
-  server:
-    extraArgs:
-      'storage.tsdb.retention.size': 2GB
 
 grafana:
   enabled: true
@@ -397,7 +400,7 @@ grafana:
          datasource: TemporalMetrics
 
 cassandra:
-  enabled: false
+  enabled: true
   persistence:
     enabled: false
   image:
